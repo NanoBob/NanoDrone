@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NanoDrone.Constants
 {
-    enum MotorDirection : byte
+    public enum MotorDirection : byte
     {
         clockwise,
         counterClockwise

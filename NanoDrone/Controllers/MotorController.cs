@@ -13,7 +13,7 @@ using System.Runtime;
 
 namespace NanoDrone.Controllers
 {
-    class FlightController
+    public class MotorController
     {
         private Drone drone;
         public Dictionary<string, Motor> motorsBySide;
@@ -26,7 +26,7 @@ namespace NanoDrone.Controllers
         private double yawPower;
         private double rollPower;
 
-        public FlightController(Drone drone)
+        public MotorController(NanoDrone drone)
         {
             this.drone = drone;
             this.throttle = 0;
@@ -46,7 +46,7 @@ namespace NanoDrone.Controllers
             ultrasonicSensorsBySide.Add("bottom",new UltrasonicSensor(23, 24));
         }
 
-        public async void InitMotors()
+        public void InitMotors()
         {
             Debug.WriteLine("Initialising motors");
             motorsBySide = new Dictionary<string, Motor>();
@@ -74,11 +74,20 @@ namespace NanoDrone.Controllers
         public void ArmMotors()
         {
             Debug.WriteLine("Arming motors");
+            List<Task> tasks = new List<Task>();
             foreach (KeyValuePair<string, Motor> kv in motorsBySide)
             {
                 Motor motor = kv.Value;
-                //motor.Arm();
-                new Task(motor.Arm).Start();
+                Task armTask = new Task(motor.Arm);
+                armTask.Start();
+                tasks.Add(armTask);
+            }
+            foreach(Task armTask in tasks)
+            {
+                while (! armTask.IsCompleted)
+                {
+
+                }
             }
             Debug.WriteLine("Armed motors");
         }
@@ -139,7 +148,7 @@ namespace NanoDrone.Controllers
             ControlMotors();
         }
 
-        public void shutDown()
+        public void ShutDown()
         {
             Throttle(0);
             Pitch(0);

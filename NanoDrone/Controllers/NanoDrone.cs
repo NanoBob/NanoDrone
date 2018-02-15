@@ -13,64 +13,40 @@ namespace NanoDrone.Controllers
 {
     public class NanoDrone : Drone
     {
-        private FlightController flightController;
-        private MissionController missionController;
+        private MotorController motorController;
+        private OrientationController orientationController;
+        public MotorController MotorController
+        {
+            get
+            {
+                return this.motorController;
+            }
+        }
 
         public NanoDrone()
         {
-            //Task.Run(() => this.Test()).Wait();
 
-            flightController = new FlightController(this);
-            missionController = new MissionController(this);
-
-
-
-            //Task.Run(SensorLoop);
-            //RunMotor();
-
-
-            /*
-            for (var i = 0; i < 100; i++)
-            {
-                flightController.Throttle(i * 0.1);
-                Task.Delay(250);
-            }
-            flightController.shutDown();
-            */
+            motorController = new MotorController(this);
+            orientationController = new OrientationController(this);
 
         }
 
-        private async Task Test()
+        ~NanoDrone()
         {
-            using (var hat = new Adafruit.Pwm.PwmController())
-            {
-                DateTime timeout = DateTime.Now.AddSeconds(60);
-                hat.SetDesiredFrequency(60);
-                while (timeout >= DateTime.Now)
-                {
-                    hat.SetPulseParameters(0, 300, false);
-                    Task.Delay(TimeSpan.FromSeconds(1)).Wait();
-                    hat.SetPulseParameters(0, 480, false);
-                    Task.Delay(TimeSpan.FromSeconds(1)).Wait();
-                }
-            }
+            this.motorController.ShutDown();
         }
 
         public void Stop()
         {
-            foreach(var keyValuePair in this.flightController.motorsBySide)
-            {
-                var motor = keyValuePair.Value;
-                motor.Stop();
-            }
+            this.motorController.ShutDown();
         }
 
 
-        public async Task SensorLoop()
+        public void SensorLoop()
         {
-            var keyValuePair = flightController.ultrasonicSensorsBySide.First();
+            var keyValuePair = motorController.ultrasonicSensorsBySide.First();
             var sensor = keyValuePair.Value;
-            var motors = flightController.motorsBySide;
+            var motors = motorController.motorsBySide;
             var firstMotor = motors.First().Value;
             while (true)
             {
@@ -87,9 +63,9 @@ namespace NanoDrone.Controllers
             }
         }
 
-        public async Task RunMotor()
+        public void RunMotor()
         {
-            var motors = flightController.motorsBySide;
+            var motors = motorController.motorsBySide;
 
             while (true)
             {
@@ -99,10 +75,10 @@ namespace NanoDrone.Controllers
                     Debug.WriteLine("Motor");
                     var motor = kvPair.Value;
                     motor.Run(0.8);
-                    await Task.Delay(250);
+                    Task.Delay(250).Wait();
 
                     motor.Stop();
-                    await Task.Delay(500);
+                    Task.Delay(500).Wait();
                 }
             }
         }

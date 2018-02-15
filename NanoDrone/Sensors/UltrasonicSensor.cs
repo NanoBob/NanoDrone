@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace NanoDrone.Sensors
 {
-    class UltrasonicSensor
+    public class UltrasonicSensor
     {
         private GpioController controller;
         private GpioPin echoPin;
@@ -43,7 +43,7 @@ namespace NanoDrone.Sensors
             {
                 return -1;
             }
-            return TriggerAndReceive().Result;
+            return TriggerAndReceive();
         }
 
         public void TriggerAsync()
@@ -52,7 +52,7 @@ namespace NanoDrone.Sensors
             {
                 return;
             }
-            Task.Run(TriggerAndReceive);
+            new Task<double>(TriggerAndReceive).Start();
         }
 
         public void Trigger(Action<double> callback)
@@ -64,13 +64,13 @@ namespace NanoDrone.Sensors
             Task.Run(() => TriggerAndCallback(callback) );
         }
 
-        public async Task TriggerAndCallback(Action<double> callback)
+        public void TriggerAndCallback(Action<double> callback)
         {
-            var result = TriggerAndReceive().Result;
+            var result = TriggerAndReceive();
             callback(result);
         }
 
-        public async Task<double> TriggerAndReceive()
+        public double TriggerAndReceive()
         {
             ManualResetEvent resetEvent = new ManualResetEvent(false);
             
@@ -78,6 +78,7 @@ namespace NanoDrone.Sensors
             resetEvent.WaitOne(TimeSpan.FromMilliseconds(0.01));
             this.triggerPin.Write(GpioPinValue.Low);
 
+            this.measuring = true;
             Stopwatch stopwatch = new Stopwatch();
 
             while (this.echoPin.Read() == GpioPinValue.Low)
@@ -96,6 +97,7 @@ namespace NanoDrone.Sensors
 
             Debug.WriteLine("Distance: {0}cm", distance);
             lastDistance = distance;
+            measuring = false;
             return distance;
         }
 

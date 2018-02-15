@@ -11,7 +11,7 @@ using Adafruit.Pwm;
 
 namespace NanoDrone.Devices
 {
-    class Motor
+    public class Motor
     {
         public MotorDirection direction;
         private PwmController hat;
@@ -74,14 +74,13 @@ namespace NanoDrone.Devices
             this.Run(0.05);
             Debug.WriteLine("Arming finished");
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            this.Stop();
+            this.Run(0);
         }
 
         public void Arm()
         {
             this.hat.SetDesiredFrequency(frequency);
             Debug.WriteLine("Arming {0} at {1}", number, frequency);
-            //this.Run(0.3);
             this.Calibrate();
         }
 
