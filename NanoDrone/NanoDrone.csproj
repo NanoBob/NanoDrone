@@ -97,8 +97,8 @@
     </Compile>
     <Compile Include="Constants\MotorDirection.cs" />
     <Compile Include="Controllers\Drone.cs" />
-    <Compile Include="Controllers\FlightController.cs" />
-    <Compile Include="Controllers\MissionController.cs" />
+    <Compile Include="Controllers\MotorController.cs" />
+    <Compile Include="Controllers\OrientationController.cs" />
     <Compile Include="Devices\Motor.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

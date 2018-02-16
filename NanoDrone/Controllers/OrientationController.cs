@@ -52,33 +52,36 @@ namespace NanoDrone.Controllers
             this.SetOwnOrientation(0, 0, 0);
 
             Test();
+            this.motorController.ShutDown();
         }
 
         public void Test()
         {
             SetOwnOrientation(0, 0, 0);
+            this.motorController.Throttle(0.1);
 
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0.1, 0);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, -0.1, 0);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, -0.1);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, 0.1);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0.1, 0, 0);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(-0.1, 0, 0);
-            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(2000));
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, 0);
+            new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
         }
 
-        public void SetTargetOrientation(double targetYaw = -100, double targetPitch = -100, double targetRoll = -100)
+        public void SetTargetOrientation(double targetYaw, double targetPitch, double targetRoll)
         {
-            this.targetYaw = targetYaw > -100 ? targetYaw : this.targetYaw;
-            this.targetPitch = targetPitch > -100 ? targetPitch : this.targetPitch;
-            this.targetRoll = targetRoll > -100 ? targetRoll : this.targetRoll;
+            this.targetYaw = targetYaw;
+            this.targetPitch = targetPitch;
+            this.targetRoll = targetRoll;
             AdjustOrientation();
         }
 
@@ -90,20 +93,19 @@ namespace NanoDrone.Controllers
             AdjustOrientation();
         }
 
+        public void AdjustOrientationControls()
+        {
+            this.motorController.Yaw(0);
+            this.motorController.Pitch(0);
+            this.motorController.Roll(0);
+        }
+
         public void AdjustOrientation()
         {
-            if (targetYaw != yaw)
-            {
-                this.motorController.Yaw(targetYaw - yaw);
-            }
-            if (targetPitch != pitch)
-            {
-                this.motorController.Pitch(targetPitch - pitch);
-            }
-            if (targetRoll != roll)
-            {
-                this.motorController.Roll(targetRoll - roll);
-            }
+            Debug.WriteLine("Adjusting to Yaw: {0}, Pitch: {1}, Roll: {2}", targetYaw - yaw, targetPitch - pitch, targetRoll - roll);
+            this.motorController.Yaw((targetYaw - yaw) * 0.35);
+            this.motorController.Pitch((targetPitch - pitch) * 0.35);
+            this.motorController.Roll((targetRoll - roll) * 0.35);
         }
 
         public void ThrottleTest()

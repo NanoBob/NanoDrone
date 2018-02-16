@@ -36,8 +36,6 @@ namespace NanoDrone.Controllers
 
             InitSensors();
             InitMotors();
-
-
         }
 
         public void InitSensors()
@@ -62,10 +60,10 @@ namespace NanoDrone.Controllers
             motorsBySide.Add("frontRight", motor);
 
             motor = new Motor(hat, 8, MotorDirection.counterClockwise);
-            motorsBySide.Add("rearLeft", motor);
+            motorsBySide.Add("rearRight", motor);
 
             motor = new Motor(hat, 12, MotorDirection.clockwise);
-            motorsBySide.Add("rearRight", motor);
+            motorsBySide.Add("rearLeft", motor);
             Debug.WriteLine("Initialized motors");
 
             ArmMotors();
@@ -94,6 +92,7 @@ namespace NanoDrone.Controllers
 
         public void ControlMotors()
         {
+            Debug.WriteLine("Yaw: {0}, Pitch: {1}, Roll: {2}", this.yawPower, this.pitchPower, this.rollPower);
             Motor motor = null;
             motorsBySide.TryGetValue("frontLeft", out motor);
             if (motor != null)
@@ -112,14 +111,14 @@ namespace NanoDrone.Controllers
             motorsBySide.TryGetValue("rearLeft", out motor);
             if (motor != null)
             {
-                motor.Run(this.throttle - this.pitchPower + this.rollPower + this.yawPower);
+                motor.Run(this.throttle - this.pitchPower + this.rollPower - this.yawPower);
             }
 
             motor = null;
             motorsBySide.TryGetValue("rearRight", out motor);
             if (motor != null)
             {
-                motor.Run(this.throttle - this.pitchPower - this.rollPower - this.yawPower);
+                motor.Run(this.throttle - this.pitchPower - this.rollPower + this.yawPower);
             }
 
         }

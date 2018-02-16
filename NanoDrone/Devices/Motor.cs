@@ -48,6 +48,11 @@ namespace NanoDrone.Devices
 
         public void Run(double speed)
         {
+            if (speed < 0)
+            {
+                hat.SetPulseParameters(this.number, (servoMin));
+                return;
+            }
             Debug.WriteLine("Running {0} at {1}", number, servoMin + speed * (servoMax - servoMin));
             hat.SetPulseParameters(this.number, servoMin + speed * ( servoMax - servoMin ) );
         }
