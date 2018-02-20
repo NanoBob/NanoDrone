@@ -53,6 +53,7 @@ namespace NanoDrone.Devices
                 hat.SetPulseParameters(this.number, (servoMin));
                 return;
             }
+            this.running = true;
             Debug.WriteLine("Running {0} at {1}", number, servoMin + speed * (servoMax - servoMin));
             hat.SetPulseParameters(this.number, servoMin + speed * ( servoMax - servoMin ) );
         }

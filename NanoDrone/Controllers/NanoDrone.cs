@@ -26,7 +26,7 @@ namespace NanoDrone.Controllers
         public NanoDrone()
         {
 
-            motorController = new MotorController(this);
+            //motorController = new MotorController(this);
             orientationController = new OrientationController(this);
 
         }

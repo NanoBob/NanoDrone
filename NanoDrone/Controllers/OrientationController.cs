@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using NanoDrone.Constants;
 using NanoDrone.Devices;
 using NanoDrone.Sensors;
+using NanoDrone.Sensors.Orientation;
 
 namespace NanoDrone.Controllers
 {
@@ -15,6 +16,7 @@ namespace NanoDrone.Controllers
     {
         private Drone drone;
         private MotorController motorController;
+        private OrientationSensor sensor;
         private double targetYaw;
         private double targetPitch;
         private double targetRoll;
@@ -48,11 +50,11 @@ namespace NanoDrone.Controllers
         {
             this.drone = drone;
             this.motorController = drone.MotorController;
-            this.SetTargetOrientation(0, 0, 0);
-            this.SetOwnOrientation(0, 0, 0);
+            //this.SetTargetOrientation(0, 0, 0);
+            //this.SetOwnOrientation(0, 0, 0);
 
-            Test();
-            this.motorController.ShutDown();
+            //Test();
+            sensor = new OrientationSensor();
         }
 
         public void Test()
@@ -75,6 +77,7 @@ namespace NanoDrone.Controllers
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
+            this.motorController.ShutDown();
         }
 
         public void SetTargetOrientation(double targetYaw, double targetPitch, double targetRoll)

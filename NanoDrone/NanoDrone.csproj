@@ -105,6 +105,8 @@
     </Compile>
     <Compile Include="Controllers\NanoDrone.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sensors\Orientation\Enum.cs" />
+    <Compile Include="Sensors\Orientation\OrientationSensor.cs" />
     <Compile Include="Sensors\UltrasonicSensor.cs" />
   </ItemGroup>
   <ItemGroup>
