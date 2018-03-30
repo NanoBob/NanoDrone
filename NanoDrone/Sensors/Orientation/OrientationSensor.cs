@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
 using Windows.Devices.Enumeration;
-using Windows.Devices.Pwm;
-using Windows.Devices.Pwm.Provider;
 using System.IO;
-using System.Threading;
-using NanoDrone.Utils;
 
 namespace NanoDrone.Sensors.Orientation
 {

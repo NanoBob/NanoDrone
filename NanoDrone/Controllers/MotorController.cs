@@ -126,20 +126,32 @@ namespace NanoDrone.Controllers
 
         public void Pitch(double power)
         {
-            this.pitchPower = power;
+            this.pitchPower = LimitThrust(power, 0.3);
             ControlMotors();
         }
 
         public void Roll(double power)
         {
-            this.rollPower = power;
+            this.rollPower = LimitThrust(power, 0.3);
             ControlMotors();
         }
 
         public void Yaw(double power)
         {
-            this.yawPower = power;
+            this.yawPower = LimitThrust(power, 0.1);
             ControlMotors();
+        }
+
+        public double LimitThrust(double thrust, double limit)
+        {
+            if (thrust > limit)
+            {
+                return limit;
+            } else if (thrust < - limit)
+            {
+                return - limit;
+            }
+            return thrust;
         }
 
         public void Throttle(double power)

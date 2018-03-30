@@ -72,7 +72,7 @@ namespace NanoDrone.Controllers
                 {
                     Utils.Orientation orientation = sensor.GetOrientation();
                     SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
-                    Task.Delay(500).Wait();
+                    Task.Delay(50).Wait();
                 }
             });
         }
@@ -116,11 +116,14 @@ namespace NanoDrone.Controllers
             AdjustOrientation();
         }
 
-        public void AdjustOrientationControls()
+        public void ResetOrientationControls()
         {
-            this.motorController.Yaw(0);
-            this.motorController.Pitch(0);
-            this.motorController.Roll(0);
+            if (this.motorController != null)
+            {
+                this.motorController.Yaw(0);
+                this.motorController.Pitch(0);
+                this.motorController.Roll(0);
+            }
         }
 
         public void AdjustOrientation()
@@ -152,13 +155,6 @@ namespace NanoDrone.Controllers
         private double CalculateDelta(double target, double source)
         {
             double delta = target - source;
-            if (delta > 180)
-            {
-                delta -= 360;
-            } else if (delta < -180)
-            {
-                delta += 360;
-            }
             return delta;
         }
 
