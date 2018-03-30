@@ -56,21 +56,22 @@ namespace NanoDrone.Controllers
         {
             this.drone = drone;
 
-            //Test();
             sensor = new OrientationSensor();
 
-            this.SetTargetOrientation(0, 0, 0);
             this.SetOwnOrientation(0, 0, 0);
+            this.SetTargetOrientation(0, 0, 0);
 
             Task.Run(() =>
             {
+                while (motorController == null)
+                {
+                }
+                //Test();
+                //Debug.WriteLine("Post test");
                 while (true)
                 {
-                    if (this.motorController != null)
-                    {
-                        Utils.Orientation orientation = sensor.GetOrientation();
-                        SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
-                    }
+                    Utils.Orientation orientation = sensor.GetOrientation();
+                    SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
                     Task.Delay(500).Wait();
                 }
             });
@@ -79,20 +80,20 @@ namespace NanoDrone.Controllers
         public void Test()
         {
             SetOwnOrientation(0, 0, 0);
-            this.motorController.Throttle(0.1);
+            this.motorController.Throttle(0);
 
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(0, 0.1, 0);
+            SetTargetOrientation(0, 10, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(0, -0.1, 0);
+            SetTargetOrientation(0, -10, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(0, 0, -0.1);
+            SetTargetOrientation(0, 0, -10);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(0, 0, 0.1);
+            SetTargetOrientation(0, 0, 10);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(0.1, 0, 0);
+            SetTargetOrientation(10, 0, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            SetTargetOrientation(-0.1, 0, 0);
+            SetTargetOrientation(-10, 0, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
@@ -124,10 +125,41 @@ namespace NanoDrone.Controllers
 
         public void AdjustOrientation()
         {
-            Debug.WriteLine("Adjusting to Yaw: {0}, Pitch: {1}, Roll: {2}", targetYaw - yaw, targetPitch - pitch, targetRoll - roll);
-            this.motorController.Yaw((targetYaw - yaw) * 0.35);
-            this.motorController.Pitch((targetPitch - pitch) * 0.35);
-            this.motorController.Roll((targetRoll - roll) * 0.35);
+            if (this.motorController != null)
+            {
+                double yawDelta = CalculateDelta(targetYaw, yaw);
+                double pitchDelta = CalculateDelta(targetPitch, pitch);
+                double rollDelta = CalculateDelta(targetRoll, roll);
+
+                this.motorController.Yaw(ConvertDeltaToThrustOffset(yawDelta));
+                this.motorController.Pitch(ConvertDeltaToThrustOffset(pitchDelta));
+                this.motorController.Roll(ConvertDeltaToThrustOffset(rollDelta));
+
+                Debug.WriteLine("Yaw:       {0} : {1}   {2}", yaw, yawDelta, ConvertDeltaToThrustOffset(yawDelta));
+                Debug.WriteLine("Pitch:     {0} : {1}   {2}", pitch, pitchDelta, ConvertDeltaToThrustOffset(pitchDelta));
+                Debug.WriteLine("Roll:      {0} : {1}   {2}", roll, rollDelta, ConvertDeltaToThrustOffset(rollDelta));
+            } else
+            {
+                Debug.WriteLine("Waiting for motor controller to boot");
+            }
+        }
+
+        private double ConvertDeltaToThrustOffset(double offset)
+        {
+            return (double)1 / (double)360 * offset;
+        }            
+
+        private double CalculateDelta(double target, double source)
+        {
+            double delta = target - source;
+            if (delta > 180)
+            {
+                delta -= 360;
+            } else if (delta < -180)
+            {
+                delta += 360;
+            }
+            return delta;
         }
 
         public void ThrottleTest()

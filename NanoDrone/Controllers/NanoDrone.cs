@@ -47,47 +47,5 @@ namespace NanoDrone.Controllers
         {
             this.motorController.ShutDown();
         }
-
-
-        public void SensorLoop()
-        {
-            var keyValuePair = motorController.ultrasonicSensorsBySide.First();
-            var sensor = keyValuePair.Value;
-            var motors = motorController.motorsBySide;
-            var firstMotor = motors.First().Value;
-            while (true)
-            {
-                Debug.WriteLine("Triggering");
-                sensor.Trigger();
-                Task.Delay(500).Wait();
-                if (sensor.LastDistance > 140)
-                {
-                    firstMotor.Stop();
-                } else
-                {
-                    firstMotor.Run((200 - sensor.LastDistance) / 200);
-                }
-            }
-        }
-
-        public void RunMotor()
-        {
-            var motors = motorController.motorsBySide;
-
-            while (true)
-            {
-                Debug.WriteLine("Loop");
-                foreach(var kvPair in motors)
-                {
-                    Debug.WriteLine("Motor");
-                    var motor = kvPair.Value;
-                    motor.Run(0.8);
-                    Task.Delay(250).Wait();
-
-                    motor.Stop();
-                    Task.Delay(500).Wait();
-                }
-            }
-        }
     }
 }

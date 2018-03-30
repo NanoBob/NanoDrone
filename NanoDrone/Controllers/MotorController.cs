@@ -36,6 +36,7 @@ namespace NanoDrone.Controllers
 
             InitSensors();
             InitMotors();
+            Throttle(0.1);
         }
 
         public void InitSensors()

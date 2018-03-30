@@ -31,24 +31,17 @@ namespace NanoDrone.Sensors.Orientation
 
         public void Initialize()
         {
-
             var settings = new I2cConnectionSettings(address) { BusSpeed = I2cBusSpeed.FastMode };
             DeviceInformationCollection devices = null;
 
             Task.Run(async () =>
             {
-
-                // Get a selector string that will return all I2C controllers on the system 
-                string aqs = I2cDevice.GetDeviceSelector();
-
-                // Find the I2C bus controller device with our selector string
-                devices = await DeviceInformation.FindAllAsync(aqs);
-
-                //search for the controller
+                string aqs = I2cDevice.GetDeviceSelector();                
+                devices = await DeviceInformation.FindAllAsync(aqs);                
                 if (!devices.Any())
+                {
                     throw new IOException("No I2C controllers were found on the system");
-
-                //see if we can find the hat
+                }                
                 sensor = await I2cDevice.FromIdAsync(devices[0].Id, settings);
 
             }).Wait();
@@ -93,6 +86,8 @@ namespace NanoDrone.Sensors.Orientation
             SetMode(OperationModes.OPERATION_MODE_NDOF);
             Debug.WriteLine("OPERATION_MODE_NDOF");
             Task.Delay(1000).Wait();
+
+            this.initialized = true;
         }
 
         public Utils.Orientation GetOrientation()
@@ -111,9 +106,6 @@ namespace NanoDrone.Sensors.Orientation
                 var rollInt = BitConverter.ToInt16(new byte[] { rollLSB, rollMSB }, 0);
 
                 Utils.Orientation orientation = new Utils.Orientation((float) yawInt / 16, (float)pitchInt / 16, (float)rollInt / 16);
-
-                Debug.WriteLine("{0},{1}:{2} {3},{4}:{5} {6},{7}:{8}", yawMSB, yawLSB, yawInt / 16, pitchMSB, pitchLSB, pitchInt / 16, rollMSB, rollLSB, rollInt / 16);
-                //Debug.WriteLine("Yaw: {0}, Pitch: {1}, Roll: {2}", orientation.yaw, orientation.pitch, orientation.roll);
 
                 return orientation;
             } catch (Exception e)
