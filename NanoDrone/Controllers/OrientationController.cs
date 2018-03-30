@@ -12,10 +12,9 @@ using NanoDrone.Sensors.Orientation;
 
 namespace NanoDrone.Controllers
 {
-    class OrientationController
+    public class OrientationController
     {
-        private Drone drone;
-        private MotorController motorController;
+        private NanoDrone drone;
         private OrientationSensor sensor;
         private double targetYaw;
         private double targetPitch;
@@ -45,16 +44,36 @@ namespace NanoDrone.Controllers
                 return roll;
             }
         }
+        public MotorController motorController
+        {
+            get
+            {
+                return drone.MotorController;
+            }
+        }
 
         public OrientationController(NanoDrone drone)
         {
             this.drone = drone;
-            this.motorController = drone.MotorController;
-            //this.SetTargetOrientation(0, 0, 0);
-            //this.SetOwnOrientation(0, 0, 0);
 
             //Test();
             sensor = new OrientationSensor();
+
+            this.SetTargetOrientation(0, 0, 0);
+            this.SetOwnOrientation(0, 0, 0);
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    if (this.motorController != null)
+                    {
+                        Utils.Orientation orientation = sensor.GetOrientation();
+                        SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
+                    }
+                    Task.Delay(500).Wait();
+                }
+            });
         }
 
         public void Test()

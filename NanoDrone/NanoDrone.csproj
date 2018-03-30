@@ -108,6 +108,7 @@
     <Compile Include="Sensors\Orientation\Enum.cs" />
     <Compile Include="Sensors\Orientation\OrientationSensor.cs" />
     <Compile Include="Sensors\UltrasonicSensor.cs" />
+    <Compile Include="Utils\Orientation.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

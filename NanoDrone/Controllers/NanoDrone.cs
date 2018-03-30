@@ -19,15 +19,22 @@ namespace NanoDrone.Controllers
         {
             get
             {
-                return this.motorController;
+                return motorController;
+            }
+        }
+        public OrientationController OrientationController
+        {
+            get
+            {
+                return orientationController;
             }
         }
 
         public NanoDrone()
         {
 
-            //motorController = new MotorController(this);
             orientationController = new OrientationController(this);
+            motorController = new MotorController(this);
 
         }
 
