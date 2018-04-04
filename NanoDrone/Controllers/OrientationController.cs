@@ -155,6 +155,14 @@ namespace NanoDrone.Controllers
         private double CalculateDelta(double target, double source)
         {
             double delta = target - source;
+            if (delta > 180)
+            {
+                delta -= 360;
+            }
+            else if (delta < -180)
+            {
+                delta += 360;
+            }
             return delta;
         }
 
