@@ -1,4 +1,5 @@
 ﻿using NanoDrone.Devices;
+using NanoDrone.RouteSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,8 @@ namespace NanoDrone.Controllers
             this.drone = drone;
             webserver = new Webserver.Webserver(666);
 
-            webserver.AddRoute(new Route("motors/:side/speed", (Request request) => {
-                string side = request.path[1];
-                var motors = drone.MotorController.motorsBySide;
-                if (motors.TryGetValue(side, out Motor motor))
-                {
-                    return motor.Speed.ToString();
-                }
-                return "Motor not found";
-            }));
+            new MotorRoutes(webserver, this.drone);
+            new OrientationRoutes(webserver, this.drone);
         }
     }
 }
