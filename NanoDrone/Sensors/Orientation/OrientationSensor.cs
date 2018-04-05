@@ -99,7 +99,8 @@ namespace NanoDrone.Sensors.Orientation
                 var pitchInt = BitConverter.ToInt16(new byte[] { pitchLSB, pitchMSB }, 0);
                 var rollInt = BitConverter.ToInt16(new byte[] { rollLSB, rollMSB }, 0);
 
-                Utils.Orientation orientation = new Utils.Orientation((float) yawInt / 16, (float)pitchInt / 16, (float)rollInt / 16);
+                // the below values depend on the actual orientation of your sensor
+                Utils.Orientation orientation = new Utils.Orientation(- (float) yawInt / 16 - 90, - (float)rollInt / 16, - (float)pitchInt / 16);
 
                 return orientation;
             } catch (Exception e)
@@ -143,13 +144,7 @@ namespace NanoDrone.Sensors.Orientation
 
         private void WriteByte(Registers address, byte data)
         {
-            //Debug.WriteLine("Pre writing {0} to {1}", data, address);
-            //ReadBytes();
             sensor.Write(new byte[] { (byte)address, data });
-            //sensor.Write(new byte[] { (byte)address });
-            //sensor.Write(new byte[] { data });
-            //Debug.WriteLine("Post writing {0} to {1}", data, address);
-            //ReadBytes();
         }
 
         private void SetMode(OperationModes mode)

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using NanoDrone.Sensors;
 using NanoDrone.Devices;
-using NanoDrone.Constants;
 using Adafruit.Pwm;
 using System.Diagnostics;
 using System.Threading;
@@ -36,7 +35,7 @@ namespace NanoDrone.Controllers
 
             InitSensors();
             InitMotors();
-            Throttle(0.1);
+            Throttle(0);
         }
 
         public void InitSensors()
@@ -54,16 +53,16 @@ namespace NanoDrone.Controllers
             hat = new PwmController();
             hat.SetDesiredFrequency(90);
 
-            var motor = new Motor(hat, 0, MotorDirection.counterClockwise);
+            var motor = new Motor(hat, 0);
             motorsBySide.Add("frontLeft", motor);
 
-            motor = new Motor(hat, 4, MotorDirection.clockwise);
+            motor = new Motor(hat, 4);
             motorsBySide.Add("frontRight", motor);
 
-            motor = new Motor(hat, 8, MotorDirection.counterClockwise);
+            motor = new Motor(hat, 8);
             motorsBySide.Add("rearRight", motor);
 
-            motor = new Motor(hat, 12, MotorDirection.clockwise);
+            motor = new Motor(hat, 12);
             motorsBySide.Add("rearLeft", motor);
             Debug.WriteLine("Initialized motors");
 

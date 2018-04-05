@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NanoDrone.Constants;
 using Adafruit.Pwm;
 
 
@@ -13,7 +12,6 @@ namespace NanoDrone.Devices
 {
     public class Motor
     {
-        public MotorDirection direction;
         private PwmController hat;
         private byte number;
         private int servoMax = (int)(4000 * 0.4);
@@ -36,11 +34,10 @@ namespace NanoDrone.Devices
         private bool running;
         public bool Running { get; }
 
-        public Motor(PwmController hat, byte motorNumber, MotorDirection direction)
+        public Motor(PwmController hat, byte motorNumber)
         {
             this.hat = hat;
             this.speed = 0;
-            this.direction = direction;
             this.running = false;
             this.number = motorNumber;
             this.frequency = 180;
@@ -53,6 +50,7 @@ namespace NanoDrone.Devices
                 hat.SetPulseParameters(this.number, (servoMin));
                 return;
             }
+            this.speed = speed;
             this.running = true;
             Debug.WriteLine("Running {0} at {1}", number, servoMin + speed * (servoMax - servoMin));
             hat.SetPulseParameters(this.number, servoMin + speed * ( servoMax - servoMin ) );

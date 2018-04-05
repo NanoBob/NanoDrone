@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NanoDrone.Constants;
 using NanoDrone.Devices;
 using NanoDrone.Sensors;
 using NanoDrone.Sensors.Orientation;
@@ -72,7 +71,7 @@ namespace NanoDrone.Controllers
                 {
                     Utils.Orientation orientation = sensor.GetOrientation();
                     SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
-                    Task.Delay(50).Wait();
+                    //Task.Delay(50).Wait();
                 }
             });
         }

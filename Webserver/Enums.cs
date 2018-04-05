@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NanoDrone.Constants
+namespace Webserver
 {
-    public enum MotorDirection : byte
-    {
-        clockwise,
-        counterClockwise
+    public enum Method{
+        GET,
+        POST,
+        PUT,
+        DELETE,
+        PATCH
     }
-
 }
