@@ -133,7 +133,7 @@ namespace NanoDrone.Sensors.Orientation
                 stringbuffer += valueString + "|";
                 if ((i + 1) % 16 == 0)
                 {
-                stringbuffer += "\n";
+                    stringbuffer += "\n";
                 }
             }
 

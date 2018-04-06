@@ -21,6 +21,9 @@ namespace NanoDrone.Controllers
         private double yaw;
         private double pitch;
         private double roll;
+        private Task sensorTask;
+        private CancellationTokenSource cancellationToken;
+        private bool running;
 
         public double Yaw
         {
@@ -51,29 +54,64 @@ namespace NanoDrone.Controllers
             }
         }
 
+        public bool Running
+        {
+            get
+            {
+                return this.running;
+            }
+        }
+
         public OrientationController(NanoDrone drone)
         {
             this.drone = drone;
+            this.running = false;
 
             sensor = new OrientationSensor();
 
             this.SetOwnOrientation(0, 0, 0);
             this.SetTargetOrientation(0, 0, 0);
+            Start();
+        }
 
-            Task.Run(() =>
+        public void Start()
+        {
+            Enable();
+            sensorTask = Task.Run(() =>
             {
                 while (motorController == null)
                 {
                 }
-                //Test();
-                //Debug.WriteLine("Post test");
                 while (true)
                 {
+                    while (!running)
+                    {
+                        Task.Delay(150).Wait();
+                    }
                     Utils.Orientation orientation = sensor.GetOrientation();
                     SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
-                    //Task.Delay(50).Wait();
                 }
             });
+        }
+
+        public bool Enable()
+        {
+            if (! running)
+            {
+                running = true;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Disable()
+        {
+            if (running)
+            {
+                running = false;
+                return true;
+            }
+            return false;
         }
 
         public void Test()
@@ -96,7 +134,7 @@ namespace NanoDrone.Controllers
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
             SetTargetOrientation(0, 0, 0);
             new ManualResetEvent(false).WaitOne(TimeSpan.FromMilliseconds(5000));
-            this.motorController.ShutDown();
+            this.motorController.Shutdown();
         }
 
         public void SetTargetOrientation(double targetYaw, double targetPitch, double targetRoll)
@@ -148,7 +186,7 @@ namespace NanoDrone.Controllers
 
         private double ConvertDeltaToThrustOffset(double offset)
         {
-            return (double)1 / (double)360 * offset;
+            return (double)1 / (double)180 * offset;
         }            
 
         private double CalculateDelta(double target, double source)

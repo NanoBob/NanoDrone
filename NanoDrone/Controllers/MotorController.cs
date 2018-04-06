@@ -137,7 +137,7 @@ namespace NanoDrone.Controllers
 
         public void Yaw(double power)
         {
-            this.yawPower = LimitThrust(power, 0.1);
+            this.yawPower = LimitThrust(power, 0);// 0.1);
             ControlMotors();
         }
 
@@ -159,12 +159,20 @@ namespace NanoDrone.Controllers
             ControlMotors();
         }
 
-        public void ShutDown()
+        public void Shutdown()
         {
-            Throttle(0);
-            Pitch(0);
-            Roll(0);
-            Yaw(0);
+            foreach(KeyValuePair<string, Motor> kvPair in this.motorsBySide)
+            {
+                kvPair.Value.Shutdown();
+            }
+        }
+
+        public void Start()
+        {
+            foreach (KeyValuePair<string, Motor> kvPair in this.motorsBySide)
+            {
+                kvPair.Value.Start();
+            }
         }
 
     }

@@ -11,8 +11,10 @@ namespace Webserver
     public class Response
     {
         private IOutputStream stream;
-        private string headers;
+        private Dictionary<string, string> headers;
         private bool sent;
+        private int statusCode;
+        private string reasonPhrase;
         public bool Sent
         {
             get
@@ -25,12 +27,22 @@ namespace Webserver
         {
             this.stream = stream;
             this.sent = false;
-            this.headers = "";
+            this.headers = new Dictionary<string, string>();
+            this.headers.Add("Connection", "close");
+            this.statusCode = 200;
+            this.reasonPhrase = "OK";
+
         }
 
         public void AddHeader(string header, string value)
         {
-            this.headers += @"\r\n" + header + ": " + value;
+            this.headers.Add(header, value);
+        }
+
+        public void SetResponseStatus(int code, string reason = "")
+        {
+            this.statusCode = code;
+            this.reasonPhrase = reason;
         }
 
         public void Send(string body)
@@ -49,8 +61,14 @@ namespace Webserver
                         var html = Encoding.UTF8.GetBytes(body);
                         using (var bodyStream = new MemoryStream(html))
                         {
-                            this.headers += $"HTTP/1.1 200 OK\r\nContent-Length: {bodyStream.Length}\r\nConnection: close\r\n\r\n";
-                            var headerArray = Encoding.UTF8.GetBytes(this.headers);
+                            this.headers.Add("Content-length", bodyStream.Length.ToString());
+                            string headersString = string.Format("HTTP/1.1 {0} {1}\r\n", this.statusCode, this.reasonPhrase);
+                            foreach(KeyValuePair<string, string> kvPair in this.headers)
+                            {
+                                headersString += string.Format("{0}: {1}\r\n", kvPair.Key, kvPair.Value);
+                            }
+                            // $"HTTP/1.1 200 OK\r\nContent-Length: {bodyStream.Length}\r\nConnection: close\r\n\r\n";
+                            var headerArray = Encoding.UTF8.GetBytes(headersString + "\r\n");
 
                             await response.WriteAsync(headerArray, 0, headerArray.Length);
                             await bodyStream.CopyToAsync(response);
@@ -61,9 +79,16 @@ namespace Webserver
             });
         }
 
+        public void Send(string body, int code, string reason = "")
+        {
+            this.SetResponseStatus(code, reason);
+            this.Send();
+        }
+
         public void Send()
         {
-            this.Send("200 OK");
+            this.Send("");
         }
+
     }
 }

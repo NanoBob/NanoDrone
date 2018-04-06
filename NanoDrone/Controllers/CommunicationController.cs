@@ -21,6 +21,7 @@ namespace NanoDrone.Controllers
 
             new MotorRoutes(webserver, this.drone);
             new OrientationRoutes(webserver, this.drone);
+            new FlightRoutes(webserver, this.drone);
         }
     }
 }

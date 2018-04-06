@@ -17,6 +17,7 @@ namespace NanoDrone.Devices
         private int servoMax = (int)(4000 * 0.4);
         private int servoMin = (int)(4000 * 0.4 * 0.35);
         private double frequency;
+        private bool shutdown;
 
         private double speed;
         public double Speed
@@ -41,10 +42,15 @@ namespace NanoDrone.Devices
             this.running = false;
             this.number = motorNumber;
             this.frequency = 180;
+            this.shutdown = false;
         }
 
-        public void Run(double speed)
+        public void Run(double speed, bool shutdownOverride = false)
         {
+            if (shutdown && !shutdownOverride)
+            {
+                return;
+            }
             if (speed < 0)
             {
                 hat.SetPulseParameters(this.number, (servoMin));
@@ -60,6 +66,17 @@ namespace NanoDrone.Devices
         {
             hat.SetPulseParameters(this.number, 0);
             running = false;
+        }
+
+        public void Shutdown()
+        {
+            this.shutdown = true;
+            this.Run(0, true);
+        }
+
+        public void Start()
+        {
+            this.shutdown = false;
         }
 
         public void Calibrate()

@@ -60,13 +60,22 @@ namespace Webserver
 
         private async void OnConnectionReceive(StreamSocketListener listener, StreamSocketListenerConnectionReceivedEventArgs args)
         {
-            Request request = await ParseRequest(args);
+            try
+            {
+                Request request = await ParseRequest(args);
 
-            Response response = new Response(args.Socket.OutputStream);
+                Response response = new Response(args.Socket.OutputStream);
 
-            string responseText = HandleRequest(request, response);
+                string responseText = HandleRequest(request, response);
 
-            response.Send(responseText);
+                response.Send(responseText);
+            } catch (Exception)
+            {
+
+                Response response = new Response(args.Socket.OutputStream);
+
+                response.Send("Internal Server Error", 500, "Internal Server Error");
+            }
         }
 
         private string HandleRequest(Request request, Response response)

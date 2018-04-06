@@ -13,7 +13,8 @@ namespace NanoDrone.RouteSets
     {
         public MotorRoutes(Webserver.Webserver server, Controllers.NanoDrone drone) : base(server)
         {
-            server.AddRoute(new Route("motors/:side/speed", (Request request) => {
+            AddRoute(new Route("motors/:side/speed", (Request request) => 
+            {
                 string side = request.path[1];
                 var motors = drone.MotorController.motorsBySide;
                 if (motors.TryGetValue(side, out Motor motor))
@@ -23,7 +24,16 @@ namespace NanoDrone.RouteSets
                 return "Motor not found";
             }));
 
-            server.AddRoute(new Route("motors/:side/test", (Request request) =>
+            AddRoute(new Route("motors/test", (Request request) =>
+            {
+                foreach(KeyValuePair<string, Motor> kvPair in drone.MotorController.motorsBySide)
+                {
+                    kvPair.Value.Test();
+                }
+                return "";
+            }));
+
+            AddRoute(new Route("motors/:side/test", (Request request) =>
             {
                 string side = request.path[1];
                 var motors = drone.MotorController.motorsBySide;
@@ -35,7 +45,7 @@ namespace NanoDrone.RouteSets
                 return "Motor not found";
             }));
 
-            server.AddRoute(new Route("motors/:side/arm", (Request request) =>
+            AddRoute(new Route("motors/:side/arm", (Request request) =>
             {
                 string side = request.path[1];
                 var motors = drone.MotorController.motorsBySide;
@@ -46,6 +56,7 @@ namespace NanoDrone.RouteSets
                 }
                 return "Motor not found";
             }));
+            
         }
     }
 }

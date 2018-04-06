@@ -54,7 +54,12 @@ namespace NanoDrone.Controllers
 
         public void Stop()
         {
-            this.motorController.ShutDown();
+            this.motorController.Shutdown();
+        }
+
+        public void Start()
+        {
+            this.motorController.Start();
         }
     }
 }
