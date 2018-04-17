@@ -89,7 +89,10 @@ namespace NanoDrone.Controllers
                         Task.Delay(150).Wait();
                     }
                     Utils.Orientation orientation = sensor.GetOrientation();
-                    SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
+                    if (orientation != null)
+                    {
+                        SetOwnOrientation(orientation.yaw, orientation.pitch, orientation.roll);
+                    }
                 }
             });
         }

@@ -29,6 +29,8 @@ namespace Webserver
             this.sent = false;
             this.headers = new Dictionary<string, string>();
             this.headers.Add("Connection", "close");
+            this.headers.Add("Content-Type", "text/plain");
+            this.headers.Add("Access-Control-Allow-Origin", "*");
             this.statusCode = 200;
             this.reasonPhrase = "OK";
 

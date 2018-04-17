@@ -30,38 +30,12 @@ namespace NanoDrone
         public MainPage()
         {
             this.InitializeComponent();
-            
-            Application.Current.Suspending += (ss, ee) =>
-            {
-                Debug.WriteLine("Suspending");
-                drone.Stop();
-            };
 
-            Window.Current.Closed += (ss, ee) =>
-            {
-                Debug.WriteLine("Closing");
-                drone.Stop();
-            };
 
-            Windows.ApplicationModel.Core.CoreApplication.Exiting += (ss, ee) =>
+            Application.Current.UnhandledException += (sender, e) =>
             {
-                Debug.WriteLine("Exiting");
                 drone.Stop();
-            };
-
-            Window.Current.VisibilityChanged += (ss, ee) =>
-            {
-                if (!ee.Visible)
-                {
-                    Debug.WriteLine("No longer visible");
-                    drone.Stop();
-                }
-            };
-
-            Application.Current.EnteredBackground += (ss, ee) =>
-            {
-                Debug.WriteLine("Going to background");
-                drone.Stop();
+                Debug.WriteLine(e.Exception);
             };
 
             drone = new Controllers.NanoDrone();

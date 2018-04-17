@@ -26,10 +26,13 @@ namespace NanoDrone.RouteSets
 
             AddRoute(new Route("motors/test", (Request request) =>
             {
-                foreach(KeyValuePair<string, Motor> kvPair in drone.MotorController.motorsBySide)
+                Task.Run(() =>
                 {
-                    kvPair.Value.Test();
-                }
+                    foreach (KeyValuePair<string, Motor> kvPair in drone.MotorController.motorsBySide)
+                    {
+                        kvPair.Value.Test();
+                    }
+                });
                 return "";
             }));
 
@@ -39,7 +42,10 @@ namespace NanoDrone.RouteSets
                 var motors = drone.MotorController.motorsBySide;
                 if (motors.TryGetValue(side, out Motor motor))
                 {
-                    motor.Test();
+                    Task.Run(() =>
+                    {
+                        motor.Test();
+                    });
                     return "Test ran";
                 }
                 return "Motor not found";
@@ -51,7 +57,10 @@ namespace NanoDrone.RouteSets
                 var motors = drone.MotorController.motorsBySide;
                 if (motors.TryGetValue(side, out Motor motor))
                 {
-                    motor.Arm();
+                    Task.Run(() =>
+                    {
+                        motor.Arm();
+                    });
                     return "Armed";
                 }
                 return "Motor not found";
