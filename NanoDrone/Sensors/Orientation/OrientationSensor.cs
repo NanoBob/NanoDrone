@@ -144,7 +144,13 @@ namespace NanoDrone.Sensors.Orientation
 
         private void WriteByte(Registers address, byte data)
         {
-            sensor.Write(new byte[] { (byte)address, data });
+            try
+            {
+                sensor.Write(new byte[] { (byte)address, data });
+            } catch(Exception e)
+            {
+
+            }
         }
 
         private void SetMode(OperationModes mode)

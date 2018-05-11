@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using NanoDrone.Controllers;
 using Windows.Devices.Gpio;
+using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -26,19 +28,10 @@ namespace NanoDrone
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private Controllers.NanoDrone drone;
         public MainPage()
         {
             this.InitializeComponent();
-
-
-            Application.Current.UnhandledException += (sender, e) =>
-            {
-                drone.Stop();
-                Debug.WriteLine(e.Exception);
-            };
-
-            drone = new Controllers.NanoDrone();
         }
+
     }
 }

@@ -107,12 +107,12 @@ namespace NanoDrone.Devices
 
         public void Test()
         {
-            for(double i = 0; i < 0.3; i+= 0.01)
+            for(double i = 0; i < 0.15; i+= 0.01)
             {
                 this.Run(i);
                 Task.Delay(100).Wait();
             }
-            for (double i = 0.3; i >= 0; i -= 0.01)
+            for (double i = 0.15; i >= 0; i -= 0.01)
             {
                 this.Run(i);
                 Task.Delay(100).Wait();
